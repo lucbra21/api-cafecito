@@ -347,13 +347,13 @@ def get_match_stats(match_id):
 @token_required
 def get_match_incident_events(match_id):
     """
-    Endpoint que devuelve los incidentEvents filtrados por equipo:
-      - homeIncidentEvents: eventos cuyo "teamId" coincide con el del equipo local.
-      - awayIncidentEvents: eventos cuyo "teamId" coincide con el del equipo visitante.
+    Endpoint que devuelve los incidentEvents del partido, obtenidos de cada equipo:
+      - homeIncidentEvents: los incidentEvents dentro de matchCentreData["home"]["incidentEvents"].
+      - awayIncidentEvents: los incidentEvents dentro de matchCentreData["away"]["incidentEvents"].
       
-    Se busca en el directorio PARTIDOS_DIR un archivo cuyo nombre termine en _<match_id>.json.
+    Se busca en el directorio PARTIDOS_DIR un archivo cuyo nombre contenga _<match_id>.json.
     """
-    # Buscamos el archivo que tenga el match_id en su nombre
+    # Buscamos el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
     files = glob.glob(pattern)
     if not files:
@@ -366,19 +366,12 @@ def get_match_incident_events(match_id):
     except Exception as e:
         return jsonify({"mensaje": "Error al leer el archivo JSON", "error": str(e)}), 500
 
-    # Obtenemos la información de los equipos desde "matchCentreData"
+    # Accedemos a matchCentreData
     match_centre = match_data.get("matchCentreData", {})
-    home = match_centre.get("home", {})
-    away = match_centre.get("away", {})
-    home_team_id = home.get("teamId")
-    away_team_id = away.get("teamId")
 
-    # Extraemos la lista de incidentEvents (si existe, de lo contrario usamos lista vacía)
-    incident_events = match_data.get("incidentEvents", [])
-    
-    # Filtramos los eventos por equipo
-    home_incident_events = [event for event in incident_events if event.get("teamId") == home_team_id]
-    away_incident_events = [event for event in incident_events if event.get("teamId") == away_team_id]
+    # Extraemos los incidentEvents de cada equipo
+    home_incident_events = match_centre.get("home", {}).get("incidentEvents", [])
+    away_incident_events = match_centre.get("away", {}).get("incidentEvents", [])
 
     result = {
         "matchId": match_data.get("matchId"),
@@ -386,6 +379,8 @@ def get_match_incident_events(match_id):
         "awayIncidentEvents": away_incident_events
     }
     return jsonify(result)
+
+
 
 def process_team(formations, team_id):
     """
@@ -664,11 +659,11 @@ def get_formation_id_name_mappings(match_id):
     }
     return jsonify(result)
 
-@app.route("/opta/qualifiers", methods=["GET"])
+@app.route("/features/qualifiers", methods=["GET"])
 @token_required
-def get_opta_qualifiers():
+def get_qualifiers():
     """
-    Devuelve la lista de qualifiers extraída del archivo Opta_qualifiers.csv.
+    Devuelve la lista de qualifiers extraída del archivo qualifiers.csv.
     Ejemplo de salida:
     [
       {"qualifierId": "1", "QUALIFIER NAME": "Long ball", ...},
@@ -676,7 +671,7 @@ def get_opta_qualifiers():
       {"qualifierId": "3", "QUALIFIER NAME": "Head pass", ...}
     ]
     """
-    filename = "Opta_qualifiers.csv"
+    filename = "qualifiers.csv"
     qualifiers = []
     try:
         with open(filename, encoding="utf-8") as csvfile:
@@ -684,15 +679,15 @@ def get_opta_qualifiers():
             for row in reader:
                 qualifiers.append(row)
     except Exception as e:
-        return jsonify({"mensaje": "Error al leer el archivo Opta_qualifiers.csv", "error": str(e)}), 500
+        return jsonify({"mensaje": "Error al leer el archivo qualifiers.csv", "error": str(e)}), 500
 
     return jsonify(qualifiers)
 
-@app.route("/opta/typeId", methods=["GET"])
+@app.route("/features/typeId", methods=["GET"])
 @token_required
-def get_opta_typeId():
+def get_typeId():
     """
-    Devuelve la lista de registros extraída del archivo Opta_typeId.csv.
+    Devuelve la lista de registros extraída del archivo typeId.csv.
     Ejemplo de salida:
     [
       {
@@ -709,7 +704,7 @@ def get_opta_typeId():
       }
     ]
     """
-    filename = "Opta_typeId.csv"
+    filename = "typeId.csv"
     type_ids = []
     try:
         with open(filename, encoding="utf-8") as csvfile:
@@ -717,7 +712,7 @@ def get_opta_typeId():
             for row in reader:
                 type_ids.append(row)
     except Exception as e:
-        return jsonify({"mensaje": "Error al leer el archivo Opta_typeId.csv", "error": str(e)}), 500
+        return jsonify({"mensaje": "Error al leer el archivo typeId.csv", "error": str(e)}), 500
 
     return jsonify(type_ids)
 
@@ -756,3 +751,6 @@ def get_teams():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
