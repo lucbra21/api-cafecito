@@ -3,6 +3,8 @@ import json
 import glob
 import csv
 
+from flasgger import Swagger
+
 from functools import wraps
 from flask import Flask, jsonify, request
 import pandas as pd
@@ -13,6 +15,43 @@ import os
 load_dotenv(dotenv_path=".env")
 
 app = Flask(__name__)
+
+# Configuración de Swagger
+app.config['SWAGGER_UI_CONFIG'] = {
+    "docExpansion": "none",
+    "defaultModelExpandDepth": 2,
+    "defaultModelsExpandDepth": 1,
+    "displayRequestDuration": True,
+    "deepLinking": True,
+    "persistAuthorization": True,
+}
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "MPAD Cafecito API by Sports Data Campus",
+        "description": "<h3>Descargo de responsabilidad y Aviso Legal </h3><p>La información y los datos presentados a través de esta API han sido obtenidos de fuentes disponibles públicamente en Internet. Esta aplicación se ha desarrollado únicamente con fines educativos, en el marco de los programas de Maestría de Sports Data Campus (SDC) y no tiene ningún propósito comercial.</br>Se pone a disposición de los usuarios <b>tal cual</b>, sin ninguna garantía expresa o implícita de ningún tipo, incluyendo pero no limitándose a garantías de idoneidad para un propósito particular, exactitud, integridad o disponibilidad. Los derechos de autor, marcas y demás derechos de propiedad intelectual pertenecen a sus respectivos titulares. El uso de la información contenida en esta API se realiza bajo el principio del <b>uso justo</b> y para fines de enseñanza, investigación y análisis académico.</br></br><b>IMPORTANTE:</b></br><ul><li>El usuario es responsable de cumplir con todas las leyes y regulaciones aplicables en su jurisdicción en relación con el uso de los datos.</li></br><li>Se recomienda que, en caso de querer utilizar estos datos para otros fines (por ejemplo, publicaciones, proyectos comerciales o difusión pública), se consulte primero con los titulares de los derechos de la información original y se obtengan las autorizaciones correspondientes.</li></br><li>La administración de este proyecto no asume responsabilidad alguna por daños o perjuicios derivados del uso de la información aquí dispuesta.</li></ul></p>",
+        "version": "1.0.1"
+    },
+    "host": "https://api-cafecito.onrender.com",  # Opcional: define el host
+    "basePath": "/",                      # Opcional: define el path base
+    "schemes": [
+        "https"
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Token de acceso en formato Bearer: 'Bearer YOUR_AUTH_TOKEN'"
+        }
+    },
+    "security": [
+        {"Bearer": []}
+    ]
+}
+
+swagger = Swagger(app, template=swagger_template)
 
 # Token de autenticación predefinido (puedes configurarlo como gustes)
 AUTH_TOKEN = os.getenv("AUTH_TOKEN")
@@ -48,13 +87,127 @@ def token_required(f):
 @token_required
 def get_competitions():
     """
-    Endpoint que devuelve las competiciones.
+    Endpoint que devuelve todas las competiciones disponibles.
     
     Parámetros opcionales en la query:
       - tournamentId: (numérico) para filtrar por torneo.
       - seasonId: (numérico) para filtrar también por temporada.
     
     Si no se reciben parámetros, se devuelve la lista completa de competiciones.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    # 1. Obtener la lista completa de competiciones (sin parámetros)
+    url = f&quot;{base_url}/competitions&quot;
+    response = requests.get(url, headers=headers)</br>
+    print(&quot;Lista completa de competiciones:&quot;)
+    print(response.json())
+
+    # 2. Obtener la competición para tournamentId = 12
+    params = {&quot;tournamentId&quot;: 12}
+    response = requests.get(url, headers=headers, params=params)</br>
+    print(&quot;Competiciones para tournamentId=12: &quot;)
+    print(response.json())
+        
+    # 3. Obtener la competición para tournamentId = 12 y seasonId = 10456
+    params = {&quot;tournamentId&quot;: 12, &quot;seasonId&quot;: 10456}
+    response = requests.get(url, headers=headers, params=params)</br>
+    print(&quot;Competición para tournamentId=12 y seasonId=10456:&quot;)
+    print(response.json())
+
+    </code></pre>
+    ---
+    tags:
+      - Competiciones
+    parameters:
+      - name: tournamentId
+        in: query
+        type: integer
+        required: false
+        description: Filtrar competiciones por ID de torneo.
+      - name: seasonId
+        in: query
+        type: integer
+        required: false
+        description: Filtrar competiciones por ID de temporada.
+    responses:
+      200:
+        description: Lista completa de competiciones.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              tournamentId:
+                type: integer
+                example: 12
+              seasonId:
+                type: integer
+                example: 10456
+              stageId:
+                type: integer
+                example: 23663
+              stageName:
+                type: string
+                example: "Champions League"
+              regionId:
+                type: integer
+                example: 250
+              tournamentName:
+                type: string
+                example: "Champions League"
+              seasonName:
+                type: string
+                example: "2024/2025"
+              competition:
+                type: string
+                example: "Europe-Champions-League-2024-2025"
+      400:
+        description: Error en los parámetros de entrada.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "tournamentId debe ser un número entero"
+      404:
+        description: No se encontraron competiciones con los parámetros indicados.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontraron competiciones con los parámetros indicados"
+      500:
+        description: Error interno al leer el archivo tournament.xlsx.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo tournament.xlsx"
+            error:
+              type: string
+              example: "Error de lectura..." 
+    x-codeSamples:
+      - lang: python
+        source: |
+          import requests
+          base_url = "https://api-cafecito.onrender.com"
+          headers = {"Authorization": "Bearer YOUR_AUTH_TOKEN"}
+          
+          # Ejemplo con parámetros
+          url_params = f"{base_url}/competitions?tournamentId=12&seasonId=10456"
+          response = requests.get(url_params, headers=headers)
+          print(response.json())
+          
+          # Ejemplo sin parámetros
+          response_all = requests.get(f"{base_url}/competitions", headers=headers)
+          print(response_all.json())   
     """
     try:
         df = pd.read_excel(TOURNAMENT_FILE)
@@ -114,9 +267,9 @@ def get_competitions():
     return jsonify(competitions)
 
 def read_matches():
-    """
-    Función auxiliar que lee el archivo CSV de partidos y retorna una lista de diccionarios.
-    """
+    
+    #Función auxiliar que lee el archivo CSV de partidos y retorna una lista de diccionarios.
+
     matches = []
     try:
         with open(MATCHES_CSV, newline='', encoding='utf-8') as csvfile:
@@ -134,6 +287,86 @@ def read_matches():
 @app.route("/matches", methods=["GET"])
 @token_required
 def get_all_matches():
+    """
+    Endpoint que trae todos los partidos disponibles.
+    
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    url = f&quot;{base_url}/matches&quot;
+    response = requests.get(url, headers=headers)</br>
+    print(&quot;Todos los partidos:&quot;)
+    print(response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partidos
+    responses:
+      200:
+        description: Lista completa de partidos.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              match_id:
+                type: string
+                example: "1866175"
+              home_team:
+                type: string
+                example: "Atalanta"
+              home_score:
+                type: string
+                example: "5"
+              away_team:
+                type: string
+                example: "Sturm Graz"
+              away_score:
+                type: string
+                example: "0"
+              date:
+                type: string
+                example: "Tuesday, Jan 21 2025"
+              time_or_status:
+                type: string
+                example: "FT"
+              region:
+                type: string
+                example: "250"
+              season:
+                type: string
+                example: "10456"
+              stage:
+                type: string
+                example: "23663"
+              tournament:
+                type: string
+                example: "12"
+              competition:
+                type: string
+                example: "Europe-Champions-League-2024-2025"
+              home_odds:
+                type: string
+                example: "N/A"
+              draw_odds:
+                type: string
+                example: "N/A"
+              away_odds:
+                type: string
+                example: "N/A"
+      500:
+        description: Error al leer el archivo CSV de partidos.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo MATCHES_CSV"
+    """
     matches = read_matches()
     return jsonify(matches)
 
@@ -141,6 +374,93 @@ def get_all_matches():
 @app.route("/matches/competition/<competition>", methods=["GET"])
 @token_required
 def get_matches_by_competition(competition):
+    """
+    Endpoint que devuelve los partidos filtrados por competición.
+    
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+   
+    competition = &quot;Europe-Champions-League-2024-2025&quot;
+    url = f&quot;{base_url}/matches/competition/{competition}&quot;
+    response = requests.get(url, headers=headers)</br>
+    print(f&quot;Partidos de la competición {competition}:&quot;)
+    print(response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partidos
+    parameters:
+      - name: competition
+        in: path
+        type: string
+        required: true
+        description: Nombre de la competición a filtrar, por ejemplo "Europe-Champions-League-2024-2025".
+    responses:
+      200:
+        description: Lista de partidos para la competición indicada.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              match_id:
+                type: string
+                example: "1866175"
+              home_team:
+                type: string
+                example: "Atalanta"
+              home_score:
+                type: string
+                example: "5"
+              away_team:
+                type: string
+                example: "Sturm Graz"
+              away_score:
+                type: string
+                example: "0"
+              date:
+                type: string
+                example: "Tuesday, Jan 21 2025"
+              time_or_status:
+                type: string
+                example: "FT"
+              region:
+                type: string
+                example: "250"
+              season:
+                type: string
+                example: "10456"
+              stage:
+                type: string
+                example: "23663"
+              tournament:
+                type: string
+                example: "12"
+              competition:
+                type: string
+                example: "Europe-Champions-League-2024-2025"
+              home_odds:
+                type: string
+                example: "N/A"
+              draw_odds:
+                type: string
+                example: "N/A"
+              away_odds:
+                type: string
+                example: "N/A"
+      404:
+        description: No se encontraron partidos para la competición indicada.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontraron partidos para la competición 'Europe-Champions-League-2024-2025'"
+    """
     matches = read_matches()
     # Se hace una comparación en minúsculas para evitar problemas con mayúsculas/minúsculas
     filtered = [m for m in matches if m.get("competition", "").lower() == competition.lower()]
@@ -152,6 +472,100 @@ def get_matches_by_competition(competition):
 @app.route("/matches/competition/<competition>/season/<season>", methods=["GET"])
 @token_required
 def get_matches_by_competition_and_season(competition, season):
+    """
+    Endpoint que trae los partidos de una competición y una temporada específicas.
+    
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    season = &quot;10456&quot;
+    competition = &quot;Europe-Champions-League-2024-2025&quot;
+    response = requests.get(f&quot;{base_url}/matches/competition/{competition}/season/{season}&quot;, headers=headers)</br>
+    print(f&quot;Partidos para la competición '{competition}' y la temporada '{season}':&quot;)
+    print(response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partidos
+    parameters:
+      - name: competition
+        in: path
+        type: string
+        required: true
+        description: >
+          El nombre de la competición a filtrar. Por ejemplo, "Europe-Champions-League-2024-2025".
+      - name: season
+        in: path
+        type: string
+        required: true
+        description: >
+          La temporada a filtrar. Por ejemplo, "10456".
+    responses:
+      200:
+        description: Lista de partidos para la competición y temporada especificadas.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              match_id:
+                type: string
+                example: "1866175"
+              home_team:
+                type: string
+                example: "Atalanta"
+              home_score:
+                type: string
+                example: "5"
+              away_team:
+                type: string
+                example: "Sturm Graz"
+              away_score:
+                type: string
+                example: "0"
+              date:
+                type: string
+                example: "Tuesday, Jan 21 2025"
+              time_or_status:
+                type: string
+                example: "FT"
+              region:
+                type: string
+                example: "250"
+              season:
+                type: string
+                example: "10456"
+              stage:
+                type: string
+                example: "23663"
+              tournament:
+                type: string
+                example: "12"
+              competition:
+                type: string
+                example: "Europe-Champions-League-2024-2025"
+              home_odds:
+                type: string
+                example: "N/A"
+              draw_odds:
+                type: string
+                example: "N/A"
+              away_odds:
+                type: string
+                example: "N/A"
+      404:
+        description: No se encontraron partidos para la competición y temporada indicadas.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontraron partidos para la competición 'Europe-Champions-League-2024-2025' y la temporada '10456'"
+    """
     matches = read_matches()
     filtered = [
         m for m in matches 
@@ -162,24 +576,427 @@ def get_matches_by_competition_and_season(competition, season):
     return jsonify(filtered)
 
 # 4. Endpoint que trae un partido en particular según su id
-@app.route("/matches/id/<match_id>", methods=["GET"])
-@token_required
-def get_match_by_id(match_id):
-    matches = read_matches()
-    for match in matches:
-        if match.get("match_id") == match_id:
-            return jsonify(match)
-    return jsonify({"mensaje": f"No se encontró el partido con id '{match_id}'"}), 404
+# @app.route("/matches/id/<match_id>", methods=["GET"])
+# @token_required
+# def get_match_by_id(match_id):
+#     """
+#     Endpoint que trae un partido en particular según su id.
+    
+#     <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+#     <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+#     base_url = &quot;https://api-cafecito.onrender.com&quot;
+#     headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+#     match_id = &quot;1734855&quot;
+#     url = f&quot;{base_url}/match/events/{match_id}&quot;
+#     response = requests.get(url, headers=headers)</br>
+#     print(&quot;Eventos del partido:&quot;)
+#     print(response.json())
+        
+#     </code></pre>
+#     ---
+#     tags:
+#       - Partido
+#     parameters:
+#       - name: match_id
+#         in: path
+#         type: string
+#         required: true
+#         description: El identificador único del partido a buscar.
+#     responses:
+#       200:
+#         description: Partido encontrado.
+#         schema:
+#           type: object
+#           properties:
+#             match_id:
+#               type: string
+#               example: "1866175"
+#             home_team:
+#               type: string
+#               example: "Atalanta"
+#             home_score:
+#               type: string
+#               example: "5"
+#             away_team:
+#               type: string
+#               example: "Sturm Graz"
+#             away_score:
+#               type: string
+#               example: "0"
+#             date:
+#               type: string
+#               example: "Tuesday, Jan 21 2025"
+#             time_or_status:
+#               type: string
+#               example: "FT"
+#             region:
+#               type: string
+#               example: "250"
+#             season:
+#               type: string
+#               example: "10456"
+#             stage:
+#               type: string
+#               example: "23663"
+#             tournament:
+#               type: string
+#               example: "12"
+#             competition:
+#               type: string
+#               example: "Europe-Champions-League-2024-2025"
+#             home_odds:
+#               type: string
+#               example: "N/A"
+#             draw_odds:
+#               type: string
+#               example: "N/A"
+#             away_odds:
+#               type: string
+#               example: "N/A"
+#       404:
+#         description: Partido no encontrado.
+#         schema:
+#           type: object
+#           properties:
+#             mensaje:
+#               type: string
+#               example: "No se encontró el partido con id '1866175'"
+#     """
+#     matches = read_matches()
+#     for match in matches:
+#         if match.get("match_id") == match_id:
+#             return jsonify(match)
+#     return jsonify({"mensaje": f"No se encontró el partido con id '{match_id}'"}), 404
 
 @app.route("/match/<match_id>", methods=["GET"])
 @token_required
 def get_match_json(match_id):
     """
-    Endpoint que recibe el match id y devuelve el contenido del archivo JSON
-    que tenga ese id en su nombre.
-    
-    Se asume que los archivos siguen el formato:
-      <fecha>_<home_team>_<away_team>_<match_id>.json
+    Endpoint que recibe el match id y devuelve el contenido completo del partido en crudo.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    match_id = &quot;1734855&quot;
+    url = f&quot;{base_url}/match/{match_id}&quot;
+    response = requests.get(url, headers=headers)</br>
+
+    if response.status_code == 200:
+        print(&quot;Contenido del Partido:&quot;)
+        print(response.json())
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El identificador único del partido a buscar.
+    responses:
+      200:
+        description: El archivo JSON completo con todos los datos del partido.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1866142
+            matchCentreData:
+              type: object
+              properties:
+                playerIdNameDictionary:
+                  type: object
+                  description: Diccionario de IDs de jugadores a nombres.
+                  example: {"100962": "Berat Djimsiti", "386390": "Charles De Ketelaere", "...": "..."}
+                periodMinuteLimits:
+                  type: object
+                  description: Límites de minutos por periodo.
+                  example: {"1": 45, "2": 90, "3": 105, "4": 120}
+                timeStamp:
+                  type: string
+                  example: "2024-12-11 05:49:57"
+                attendance:
+                  type: integer
+                  example: 22967
+                venueName:
+                  type: string
+                  example: "Gewiss Stadium"
+                referee:
+                  type: object
+                  properties:
+                    officialId:
+                      type: integer
+                      example: 1163
+                    firstName:
+                      type: string
+                      example: "Szymon"
+                    lastName:
+                      type: string
+                      example: "Marciniak"
+                    hasParticipatedMatches:
+                      type: boolean
+                      example: false
+                    name:
+                      type: string
+                      example: "Szymon Marciniak"
+                weatherCode:
+                  type: string
+                  example: ""
+                elapsed:
+                  type: string
+                  example: "F"
+                startTime:
+                  type: string
+                  example: "2024-12-10T21:00:00"
+                startDate:
+                  type: string
+                  example: "2024-12-10T00:00:00"
+                score:
+                  type: string
+                  example: "2 : 3"
+                htScore:
+                  type: string
+                  example: "1 : 1"
+                ftScore:
+                  type: string
+                  example: "2 : 3"
+                etScore:
+                  type: string
+                  example: ""
+                pkScore:
+                  type: string
+                  example: ""
+                statusCode:
+                  type: integer
+                  example: 6
+                periodCode:
+                  type: integer
+                  example: 7
+                home:
+                  type: object
+                  properties:
+                    teamId:
+                      type: integer
+                      example: 300
+                    formations:
+                      type: array
+                      items:
+                        type: object
+                    stats:
+                      type: object
+                    incidentEvents:
+                      type: array
+                      items:
+                        type: object
+                    shotZones:
+                      type: object
+                    name:
+                      type: string
+                      example: "Atalanta"
+                    countryName:
+                      type: string
+                      example: "Italia"
+                    players:
+                      type: array
+                      items:
+                        type: object
+                    managerName:
+                      type: string
+                      example: "Gian Piero Gasperini"
+                    scores:
+                      type: object
+                      properties:
+                        halftime:
+                          type: integer
+                          example: 1
+                        fulltime:
+                          type: integer
+                          example: 2
+                        running:
+                          type: integer
+                          example: 2
+                    field:
+                      type: string
+                      example: "home"
+                    averageAge:
+                      type: number
+                      example: 27.2
+                away:
+                  type: object
+                  properties:
+                    teamId:
+                      type: integer
+                      example: 52
+                    formations:
+                      type: array
+                      items:
+                        type: object
+                    stats:
+                      type: object
+                    incidentEvents:
+                      type: array
+                      items:
+                        type: object
+                    shotZones:
+                      type: object
+                    name:
+                      type: string
+                      example: "Real Madrid"
+                    countryName:
+                      type: string
+                      example: "España"
+                    players:
+                      type: array
+                      items:
+                        type: object
+                    managerName:
+                      type: string
+                      example: "Carlo Ancelotti"
+                    scores:
+                      type: object
+                      properties:
+                        halftime:
+                          type: integer
+                          example: 1
+                        fulltime:
+                          type: integer
+                          example: 3
+                        running:
+                          type: integer
+                          example: 3
+                    field:
+                      type: string
+                      example: "away"
+                    averageAge:
+                      type: number
+                      example: 25.1
+                maxMinute:
+                  type: integer
+                  example: 94
+                minuteExpanded:
+                  type: integer
+                  example: 97
+                maxPeriod:
+                  type: integer
+                  example: 2
+                expandedMinutes:
+                  type: object
+                  example: {"1": {}, "2": {}}
+                expandedMaxMinute:
+                  type: integer
+                  example: 97
+                periodEndMinutes:
+                  type: object
+                  example: {"1": 47, "2": 94}
+                commonEvents:
+                  type: array
+                  items:
+                    type: object
+                events:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 2757746379.0
+                      eventId:
+                        type: number
+                        example: 2
+                      minute:
+                        type: number
+                        example: 0
+                      second:
+                        type: number
+                        example: 0
+                      teamId:
+                        type: number
+                        example: 52
+                      x:
+                        type: number
+                        example: 0.0
+                      y:
+                        type: number
+                        example: 0.0
+                      expandedMinute:
+                        type: number
+                        example: 0
+                      period:
+                        type: object
+                        properties:
+                          value:
+                            type: number
+                            example: 1
+                          displayName:
+                            type: string
+                            example: "FirstHalf"
+                      type:
+                        type: object
+                        properties:
+                          value:
+                            type: number
+                            example: 32
+                          displayName:
+                            type: string
+                            example: "Start"
+                      outcomeType:
+                        type: object
+                        properties:
+                          value:
+                            type: number
+                            example: 1
+                          displayName:
+                            type: string
+                            example: "Successful"
+                      qualifiers:
+                        type: array
+                        items:
+                          type: object
+                      satisfiedEventsTypes:
+                        type: array
+                        items:
+                          type: number
+                      isTouch:
+                        type: boolean
+                        example: false
+                timeoutInSeconds:
+                  type: number
+                  example: 0
+            matchCentreEventTypeJson:
+              type: object
+              description: Diccionario de tipos de eventos.
+              example: {"shotSixYardBox": 0, "shotPenaltyArea": 1, "...": "..."}
+            formationIdNameMappings:
+              type: object
+              description: Mapeo de id de formaciones a nombres.
+              example: {"2": "442", "3": "41212", "...": "..."}
+      404:
+        description: No se encontró el partido con el id indicado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1866142'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Error de lectura..."
     """
     # Usamos glob para buscar archivos que terminen en _<match_id>.json
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -202,45 +1019,197 @@ def get_match_json(match_id):
 @token_required
 def get_match_base(match_id):
     """
-    Endpoint que devuelve la información base del partido con la siguiente estructura:
-    
+    Endpoint que devuelve la información base del partido.
+
+    La respuesta incluye datos generales del partido, información del árbitro, y datos de
+    los equipos local y visitante. La estructura de la respuesta es la siguiente:
+
     {
-      "matchId": 1734855,
-      "timeStamp": "2024-01-08 15:14:11",
-      "attendance": 11204,
-      "venueName": "Cívitas Metropolitano",
-      "referee_officialId": 4159,
-      "referee_name": "Jorge Figueroa Vázquez",
-      "weatherCode": "",
-      "elapsed": "F",
-      "startTime": "2024-01-02T17:00:00",
-      "startDate": "2024-01-02T00:00:00",
-      "score": "0 : 2",
-      "htScore": "0 : 1",
-      "ftScore": "0 : 2",
-      "etScore": "",
-      "statusCode": 6,
-      "periodCode": 7,
-      "maxMinute": 93,
-      "minuteExpanded": 96,
-      "maxPeriod": 2,
-      "expandedMaxMinute": 96,
-      "periodEndMinutes_1": 47,
-      "periodEndMinutes_2": 93,
-      "timeoutInSeconds": 0,
-      "home_id": 819,
-      "home_name": "Getafe",
-      "home_countryName": "España",
-      "home_managerName": "José Bordalás",
-      "home_averageAge": 28.4,
-      "away_id": 64,
-      "away_name": "Rayo Vallecano",
-      "away_countryName": "España",
-      "away_managerName": "Francisco Rodríguez",
-      "away_averageAge": 28.9
+        "matchId": 1866142,
+        "timeStamp": "2024-12-11 05:49:57",
+        "attendance": 22967,
+        "venueName": "Gewiss Stadium",
+        "referee_officialId": 1163,
+        "referee_name": "Szymon Marciniak",
+        "weatherCode": "",
+        "elapsed": "F",
+        "startTime": "2024-12-10T21:00:00",
+        "startDate": "2024-12-10T00:00:00",
+        "score": "2 : 3",
+        "htScore": "1 : 1",
+        "ftScore": "2 : 3",
+        "etScore": "",
+        "statusCode": 6,
+        "periodCode": 7,
+        "maxMinute": 94,
+        "minuteExpanded": 97,
+        "maxPeriod": 2,
+        "expandedMaxMinute": 97,
+        "periodEndMinutes_1": 47,
+        "periodEndMinutes_2": 94,
+        "timeoutInSeconds": 0,
+        "home_id": 300,
+        "home_name": "Atalanta",
+        "home_countryName": "Italia",
+        "home_managerName": "Gian Piero Gasperini",
+        "home_averageAge": 27.2,
+        "away_id": 52,
+        "away_name": "Real Madrid",
+        "away_countryName": "España",
+        "away_managerName": "Carlo Ancelotti",
+        "away_averageAge": 25.1
     }
-    
-    Se busca en el directorio PARTIDOS_DIR un archivo cuyo nombre termine en _<match_id>.json.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    match_id = &quot;1734855&quot;
+    url = f&quot;{base_url}/match/base/{match_id}&quot;
+    response = requests.get(url, headers=headers)</br>
+
+    if response.status_code == 200:
+        base_info = response.json()
+        print(&quot;Información base del partido:&quot;)
+        print(base_info)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El identificador único del partido a buscar.
+    responses:
+      200:
+        description: Información base del partido.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1866142
+            timeStamp:
+              type: string
+              example: "2024-12-11 05:49:57"
+            attendance:
+              type: integer
+              example: 22967
+            venueName:
+              type: string
+              example: "Gewiss Stadium"
+            referee_officialId:
+              type: integer
+              example: 1163
+            referee_name:
+              type: string
+              example: "Szymon Marciniak"
+            weatherCode:
+              type: string
+              example: ""
+            elapsed:
+              type: string
+              example: "F"
+            startTime:
+              type: string
+              example: "2024-12-10T21:00:00"
+            startDate:
+              type: string
+              example: "2024-12-10T00:00:00"
+            score:
+              type: string
+              example: "2 : 3"
+            htScore:
+              type: string
+              example: "1 : 1"
+            ftScore:
+              type: string
+              example: "2 : 3"
+            etScore:
+              type: string
+              example: ""
+            statusCode:
+              type: integer
+              example: 6
+            periodCode:
+              type: integer
+              example: 7
+            maxMinute:
+              type: integer
+              example: 94
+            minuteExpanded:
+              type: integer
+              example: 97
+            maxPeriod:
+              type: integer
+              example: 2
+            expandedMaxMinute:
+              type: integer
+              example: 97
+            periodEndMinutes_1:
+              type: integer
+              example: 47
+            periodEndMinutes_2:
+              type: integer
+              example: 94
+            timeoutInSeconds:
+              type: integer
+              example: 0
+            home_id:
+              type: integer
+              example: 300
+            home_name:
+              type: string
+              example: "Atalanta"
+            home_countryName:
+              type: string
+              example: "Italia"
+            home_managerName:
+              type: string
+              example: "Gian Piero Gasperini"
+            home_averageAge:
+              type: number
+              example: 27.2
+            away_id:
+              type: integer
+              example: 52
+            away_name:
+              type: string
+              example: "Real Madrid"
+            away_countryName:
+              type: string
+              example: "España"
+            away_managerName:
+              type: string
+              example: "Carlo Ancelotti"
+            away_averageAge:
+              type: number
+              example: 25.1
+      404:
+        description: No se encontró el partido con el id indicado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1866142'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Error de lectura..."
     """
     # Buscamos el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -310,12 +1279,69 @@ def get_match_base(match_id):
 def get_match_stats(match_id):
     """
     Endpoint que devuelve los stats del equipo local y visitante.
-    
-    Se busca en el directorio PARTIDOS_DIR un archivo que cumpla
-    con el patrón: *_<match_id>.json
-    y se extraen los stats de las claves:
-      - matchCentreData > home > stats
-      - matchCentreData > away > stats
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    match_id = &quot;1734855&quot;
+    url = f&quot;{base_url}/match/stats/{match_id}&quot;
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        stats = response.json()
+        print(&quot;Stats del equipo local y visitante:&quot;)
+        print(stats)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El identificador único del partido.
+    responses:
+      200:
+        description: Objeto JSON con los stats del equipo local y visitante.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1866175
+            homeStats:
+              type: object
+              description: Estadísticas del equipo local (contenidas en matchCentreData > home > stats).
+              example: {"goals": 2, "shots": 15}
+            awayStats:
+              type: object
+              description: Estadísticas del equipo visitante (contenidas en matchCentreData > away > stats).
+              example: {"goals": 3, "shots": 18}
+      404:
+        description: No se encontró el partido con el id indicado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1866175'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Error de lectura..."
     """
     # Buscamos el archivo cuyo nombre termine en _<match_id>.json
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -347,11 +1373,75 @@ def get_match_stats(match_id):
 @token_required
 def get_match_incident_events(match_id):
     """
-    Endpoint que devuelve los incidentEvents del partido, obtenidos de cada equipo:
-      - homeIncidentEvents: los incidentEvents dentro de matchCentreData["home"]["incidentEvents"].
-      - awayIncidentEvents: los incidentEvents dentro de matchCentreData["away"]["incidentEvents"].
+    Endpoint que devuelve los incidentEvents del partido, obtenidos de cada equipo.
       
-    Se busca en el directorio PARTIDOS_DIR un archivo cuyo nombre contenga _<match_id>.json.
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    match_id = &quot;1734855&quot;
+    
+    url = f&quot;{base_url}/match/incidentEvents/{match_id}&quot;
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        incident_events = response.json()
+        print(&quot;Incident Events del equipo local:&quot;)
+        print(incident_events.get(&quot;homeIncidentEvents&quot;))
+        print(&quot;Incident Events del equipo visitante:&quot;)
+        print(incident_events.get(&quot;awayIncidentEvents&quot;))
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El identificador único del partido.
+    responses:
+      200:
+        description: Objeto JSON que contiene los incidentEvents del partido.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1866142
+            homeIncidentEvents:
+              type: array
+              items:
+                type: object
+              description: Lista de incidentEvents del equipo local (matchCentreData["home"]["incidentEvents"]).
+            awayIncidentEvents:
+              type: array
+              items:
+                type: object
+              description: Lista de incidentEvents del equipo visitante (matchCentreData["away"]["incidentEvents"]).
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1866142'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscamos el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -433,17 +1523,138 @@ def process_team(formations, team_id):
 @token_required
 def get_match_players(match_id):
     """
-    Endpoint que devuelve la lista de jugadores que participaron en el partido,
-    junto con el matchId y el nombre de cada equipo.
+    Devuelve la lista de jugadores que participaron en el partido, junto con el matchId y el nombre de cada equipo.
 
     La respuesta tendrá la siguiente estructura:
     {
       "matchId": <matchId>,
       "homeTeamName": <nombre del equipo local>,
       "awayTeamName": <nombre del equipo visitante>,
-      "homePlayers": [ {teamId, playerId, playerName, jerseyNumber, matchStart, formationSlot}, ... ],
-      "awayPlayers": [ {teamId, playerId, playerName, jerseyNumber, matchStart, formationSlot}, ... ]
+      "homePlayers": [
+          {
+              "teamId": <id del equipo>,
+              "playerId": <id del jugador>,
+              "playerName": <nombre del jugador>,
+              "jerseyNumber": <número de camiseta>,
+              "matchStart": <1 si es titular, 0 si es suplente>,
+              "formationSlot": <posición asignada en la formación o None>
+          },
+          ...
+      ],
+      "awayPlayers": [ ... ]
     }
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    match_id = &quot;1734855&quot;
+
+    url = f&quot;{base_url}/match/players/{match_id}&quot;
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        players = response.json()
+        print(&quot;Jugadores del equipo local:&quot;)
+        for player in players.get(&quot;homePlayers&quot;, []):
+            print(player)
+        print(&quot;Jugadores del equipo visitante:&quot;)
+        for player in players.get(&quot;awayPlayers&quot;, []):
+            print(player)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: Identificador único del partido.
+    responses:
+      200:
+        description: Objeto JSON con la información del partido y la lista de jugadores.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1866142
+            homeTeamName:
+              type: string
+              example: "Atalanta"
+            awayTeamName:
+              type: string
+              example: "Real Madrid"
+            homePlayers:
+              type: array
+              items:
+                type: object
+                properties:
+                  teamId:
+                    type: integer
+                    example: 300
+                  playerId:
+                    type: integer
+                    example: 383278
+                  playerName:
+                    type: string
+                    example: "Marco Carnesecchi"
+                  jerseyNumber:
+                    type: string
+                    example: "29"
+                  matchStart:
+                    type: integer
+                    example: 1
+                  formationSlot:
+                    type: integer
+                    example: 1
+            awayPlayers:
+              type: array
+              items:
+                type: object
+                properties:
+                  teamId:
+                    type: integer
+                    example: 52
+                  playerId:
+                    type: integer
+                    example: 73798
+                  playerName:
+                    type: string
+                    example: "Thibaut Courtois"
+                  jerseyNumber:
+                    type: string
+                    example: "1"
+                  matchStart:
+                    type: integer
+                    example: 1
+                  formationSlot:
+                    type: integer
+                    example: 1
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1866142'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscar el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -498,18 +1709,122 @@ def get_match_players(match_id):
 @token_required
 def get_match_formations(match_id):
     """
-    Endpoint que devuelve todas las formaciones del equipo local y del equipo visitante para un partido dado.
-    
-    Se busca el archivo en el directorio PARTIDOS_DIR cuyo nombre contenga el match_id
-    (por ejemplo: "20240102_Getafe_Rayo Vallecano_1734855.json").
+    Devuelve todas las formaciones del equipo local y del equipo visitante para un partido dado.
 
     La respuesta tendrá la siguiente estructura:
-    
+
     {
-      "matchId": 1734855,
+      "matchId": <matchId>,
       "homeFormations": [ ... ],
       "awayFormations": [ ... ]
     }
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    match_id = &quot;1866142&quot;  # Ejemplo de id de partido
+    url = f&quot;{base_url}/match/formations/{match_id}&quot;
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        formations = response.json()
+        print(&quot;Match ID:&quot;, formations.get(&quot;matchId&quot;))
+        print(&quot;Formaciones del equipo local:&quot;)
+        for formation in formations.get(&quot;homeFormations&quot;, []):
+            print(formation)
+        print(&quot;Formaciones del equipo visitante:&quot;)
+        for formation in formations.get(&quot;awayFormations&quot;, []):
+            print(formation)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: Identificador del partido.
+    responses:
+      200:
+        description: Formaciones obtenidas exitosamente.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1734855
+            homeFormations:
+              type: array
+              items:
+                type: object
+              example: [
+                {
+                  "captainPlayerId": 85070,
+                  "endMinuteExpanded": 60,
+                  "formationId": 18,
+                  "formationName": "3412",
+                  "formationPositions": [
+                    {"horizontal": 5.0, "vertical": 0.0},
+                    {"horizontal": 1.0, "vertical": 5.0},
+                    {"horizontal": 9.0, "vertical": 5.0}
+                    
+                  ],
+                  "formationSlots": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 0, ...],
+                  "jerseyNumbers": [29, 16, 22, 23, 4, 19, 15, 13, 8, 17, 11, ...],
+                  "period": 16,
+                  "playerIds": [383278, 349184, 402046, ...],
+                  "startMinuteExpanded": 0
+                }
+              ]
+            awayFormations:
+              type: array
+              items:
+                type: object
+              example: [
+                {
+                  "captainPlayerId": 144511,
+                  "endMinuteExpanded": 29,
+                  "formationId": 8,
+                  "formationName": "4231",
+                  "formationPositions": [
+                    {"horizontal": 5.0, "vertical": 0.0},
+                    {"horizontal": 1.0, "vertical": 2.5},
+                    {"horizontal": 9.0, "vertical": 2.5}
+                    
+                  ],
+                  "formationSlots": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...],
+                  "jerseyNumbers": [1, 17, 20, 8, 14, 22, 21, ...],
+                  "period": 16,
+                  "playerIds": [73798, 144511, 422957, ...],
+                  "startMinuteExpanded": 0
+                }
+              ]
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1734855'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscar el archivo que contenga el match_id en el nombre
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -547,17 +1862,134 @@ def get_match_formations(match_id):
 @token_required
 def get_match_events(match_id):
     """
-    Endpoint que devuelve todos los eventos del partido.
-    
-    Se asume que los eventos se encuentran en:
-      match_data["matchCentreData"]["events"]
-    
-    La respuesta tendrá la siguiente estructura:
-    
-    {
-      "matchId": <matchId>,
-      "events": [ ... ]
-    }
+    Obtiene todos los eventos del partido.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+
+    match_id = &quot;1866142&quot;  # Ejemplo de id de partido
+    url = f&quot;{base_url}/match/events/{match_id}&quot;
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        result = response.json()
+        print(&quot;Match ID:&quot;, result.get(&quot;matchId&quot;))
+        print(&quot;Eventos:&quot;)
+        for event in result.get(&quot;events&quot;, []):
+            print(event)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El ID del partido.
+    responses:
+      200:
+        description: Una lista de eventos del partido.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1734855
+            events:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 2757746379.0
+                  eventId:
+                    type: number
+                    example: 2
+                  minute:
+                    type: number
+                    example: 0
+                  second:
+                    type: number
+                    example: 0
+                  teamId:
+                    type: number
+                    example: 52
+                  x:
+                    type: number
+                    example: 0.0
+                  y:
+                    type: number
+                    example: 0.0
+                  expandedMinute:
+                    type: number
+                    example: 0
+                  period:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                        example: 1
+                      displayName:
+                        type: string
+                        example: "FirstHalf"
+                  type:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                        example: 32
+                      displayName:
+                        type: string
+                        example: "Start"
+                  outcomeType:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                        example: 1
+                      displayName:
+                        type: string
+                        example: "Successful"
+                  qualifiers:
+                    type: array
+                    items:
+                      type: object
+                    example: []
+                  satisfiedEventsTypes:
+                    type: array
+                    items:
+                      type: number
+                    example: []
+                  isTouch:
+                    type: boolean
+                    example: false
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1734855'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscar el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -586,20 +2018,71 @@ def get_match_events(match_id):
 def get_match_event_types(match_id):
     """
     Endpoint que devuelve la lista de matchCentreEventTypeJson para el partido.
-    
-    Se asume que la estructura del archivo JSON es similar a:
-    
-    {
-       "matchId": 1734855,
-       "matchCentreEventTypeJson": { ... },
-       ...
-    }
-    
-    La respuesta tendrá la siguiente estructura:
-    {
-      "matchId": 1734855,
-      "matchCentreEventTypeJson": { ... }
-    }
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+
+    match_id = &quot;1866142&quot;  # Ejemplo de id de partido
+    url = f&quot;{base_url}/match/matchCentreEventTypeJson/{match_id}&quot;
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        result = response.json()
+        print(&quot;matchCentreEventTypeJson:&quot;)
+        print(result)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El ID del partido.
+    responses:
+      200:
+        description: Objeto con el matchId y el diccionario matchCentreEventTypeJson.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1734855
+            matchCentreEventTypeJson:
+              type: object
+              description: Diccionario que mapea nombres de eventos a sus códigos.
+              example:
+                aerialSuccess: 196
+                assist: 92
+                assistCorner: 48
+                assistCross: 47
+                assistFreekick: 50
+                # ... (otros mapeos)
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1734855'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscar el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -625,20 +2108,89 @@ def get_match_event_types(match_id):
 def get_formation_id_name_mappings(match_id):
     """
     Endpoint que devuelve la lista de formationIdNameMappings para el partido.
-    
-    Se asume que la estructura del archivo JSON es similar a:
-    
-    {
-       "matchId": 1734855,
-       "formationIdNameMappings": { ... },
-       ...
-    }
-    
-    La respuesta tendrá la siguiente estructura:
-    {
-      "matchId": 1734855,
-      "formationIdNameMappings": { ... }
-    }
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+
+    match_id = &quot;1866142&quot;  # Ejemplo de id de partido
+    url = f&quot;{base_url}/match/formationIdNameMappings/{match_id}&quot;
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        result = response.json()
+        print(&quot;formationIdNameMappings:&quot;)
+        print(result)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Partido
+    parameters:
+      - name: match_id
+        in: path
+        type: string
+        required: true
+        description: El ID del partido.
+    responses:
+      200:
+        description: Objeto que contiene el matchId y el diccionario formationIdNameMappings.
+        schema:
+          type: object
+          properties:
+            matchId:
+              type: integer
+              example: 1734855
+            formationIdNameMappings:
+              type: object
+              description: Diccionario que mapea los formation IDs a sus nombres.
+              example:
+                10: "532"
+                11: "541"
+                12: "352"
+                13: "343"
+                14: "31312"
+                15: "4222"
+                16: "3511"
+                17: "3421"
+                18: "3412"
+                19: "3142"
+                2: "442"
+                20: "343d"
+                21: "4132"
+                22: "4240"
+                23: "4312"
+                24: "3241"
+                25: "3331"
+                3: "41212"
+                4: "433"
+                5: "451"
+                6: "4411"
+                7: "4141"
+                8: "4231"
+                9: "4321"
+      404:
+        description: Partido no encontrado.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "No se encontró el partido con id '1734855'"
+      500:
+        description: Error al leer el archivo JSON.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo JSON"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     # Buscar el archivo cuyo nombre contenga el match_id
     pattern = os.path.join(PARTIDOS_DIR, f"*_{match_id}.json")
@@ -663,13 +2215,53 @@ def get_formation_id_name_mappings(match_id):
 @token_required
 def get_qualifiers():
     """
-    Devuelve la lista de qualifiers extraída del archivo qualifiers.csv.
-    Ejemplo de salida:
-    [
-      {"qualifierId": "1", "QUALIFIER NAME": "Long ball", ...},
-      {"qualifierId": "2", "QUALIFIER NAME": "Cross", ...},
-      {"qualifierId": "3", "QUALIFIER NAME": "Head pass", ...}
-    ]
+    Devuelve la lista de qualifiers.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    url_qualifiers = f&quot;{base_url}/features/qualifiers&quot;
+    response = requests.get(url_qualifiers, headers=headers)
+    if response.status_code == 200:
+        qualifiers = response.json()
+        print(&quot;Qualifiers:&quot;)
+        for q in qualifiers:
+            print(q)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+
+    </code></pre>
+    ---
+    tags:
+      - Variables
+    responses:
+      200:
+        description: Una lista de qualifiers extraída del archivo qualifiers.csv.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              qualifierId:
+                type: string
+                example: "1"
+              QUALIFIER NAME:
+                type: string
+                example: "Long ball"
+      500:
+        description: Error al leer el archivo qualifiers.csv.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo qualifiers.csv"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     filename = "qualifiers.csv"
     qualifiers = []
@@ -687,22 +2279,59 @@ def get_qualifiers():
 @token_required
 def get_typeId():
     """
-    Devuelve la lista de registros extraída del archivo typeId.csv.
-    Ejemplo de salida:
-    [
-      {
-        "typeId": "1",
-        "EVENT NAME": "Pass",
-        "DESCRIPTION": "The attempted delivery of the ball ...",
-        "ASSOCIATED qualifierId VALUES": "1, 2, 3, ..."
-      },
-      {
-        "typeId": "2",
-        "EVENT NAME": "Offside Pass",
-        "DESCRIPTION": "A pass attempt where the intended ...",
-        "ASSOCIATED qualifierId VALUES": "1, 2, 3, ..."
-      }
-    ]
+    Devuelve la lista de registros extraída de typeId.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    url_typeid = f&quot;{base_url}/features/typeId&quot;
+    response = requests.get(url_typeid, headers=headers)
+    if response.status_code == 200:
+        type_ids = response.json()
+        print(&quot;TypeId:&quot;)
+        for t in type_ids:
+            print(t)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Variables
+    responses:
+      200:
+        description: Una lista de registros extraída del archivo typeId.csv.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              typeId:
+                type: string
+                example: "1"
+              EVENT NAME:
+                type: string
+                example: "Pass"
+              DESCRIPTION:
+                type: string
+                example: "The attempted delivery of the ball from one player to another player on the same team. A player can use any part of their body (permitted in the laws of the game) to execute a pass. Event categorization includes open play passes, goal kicks, corners and free kicks played as passes. Crosses, keeper throws, and throw ins do not count as passes. outcome: 0 = Unsuccessful pass = pass did not find teammate | 1 = Successful pass"
+              ASSOCIATED qualifierId VALUES:
+                type: string
+                example: "1, 2, 3, 4, 5, 6, 15, 22, 23, 24, 25, 26, 29, 31, 55, 56, 74, 96, 97, 106, 107, 123, 124, 138, 140, 141, 152, 154, 155, 156, 157, 160, 168, 189, 195, 196, 198, 199, 210, 212, 213, 214, 218, 223, 224, 225, 233, 236, 237, 238, 240, 241, 266, 278, 279, 286, 287, 307, 345, 358, 359, 362, 459"
+      500:
+        description: Error al leer los datos typeId.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer los datos de typeId"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     filename = "typeId.csv"
     type_ids = []
@@ -720,20 +2349,65 @@ def get_typeId():
 @token_required
 def get_teams():
     """
-    Devuelve la lista de equipos extraída del archivo teams.csv.
-    Ejemplo de salida:
-    [
-      {
-         "matchId": "1866220",
-         "teamId": "361",
-         "teamName": "Salzburg",
-         "countryCode": "at",
-         "countryName": "Austria",
-         "imageUrl": "https://d2zywfiolv4f83.cloudfront.net/img/teams/361.png"
-      },
-      ...
-    ]
-    Nota: La primera columna del CSV puede estar vacía.
+    Devuelve la lista de equipos.
+
+    <h3 class="code-line" data-line-start=0 data-line-end=1 >Ejemplo de uso con Python</h3>
+    <pre><code class="has-line-data" data-line-start="3" data-line-end="14" color="#ffe">import requests
+
+    base_url = &quot;https://api-cafecito.onrender.com&quot;
+    headers = {&quot;Authorization&quot;: &quot;Bearer YOUR_AUTH_TOKEN&quot;}</br>
+    
+    url = f&quot;{base_url}/teams&quot;
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        teams = response.json()
+        print(&quot;Teams:&quot;)
+        for team in teams:
+            print(team)
+    else:
+        print(&quot;Error:&quot;, response.status_code, response.json())
+        
+    </code></pre>
+    ---
+    tags:
+      - Equipos
+    responses:
+      200:
+        description: Lista de equipos extraída del archivo teams.csv.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              matchId:
+                type: string
+                example: "1866220"
+              teamId:
+                type: string
+                example: "361"
+              teamName:
+                type: string
+                example: "Salzburg"
+              countryCode:
+                type: string
+                example: "at"
+              countryName:
+                type: string
+                example: "Austria"
+              imageUrl:
+                type: string
+                example: "https://d2zywfiolv4f83.cloudfront.net/img/teams/361.png"
+      500:
+        description: Error al leer el archivo teams.csv.
+        schema:
+          type: object
+          properties:
+            mensaje:
+              type: string
+              example: "Error al leer el archivo teams.csv"
+            error:
+              type: string
+              example: "Detalle del error"
     """
     filename = "teams.csv"
     teams = []
@@ -746,7 +2420,6 @@ def get_teams():
         return jsonify({"mensaje": "Error al leer el archivo teams.csv", "error": str(e)}), 500
 
     return jsonify(teams)
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
