@@ -18,6 +18,7 @@ app = Flask(__name__)
 
 # Configuración de Swagger
 app.config['SWAGGER_UI_CONFIG'] = {
+    "title": "MPAD Cafecito API by Sports Data Campus",
     "docExpansion": "none",
     "defaultModelExpandDepth": 2,
     "defaultModelsExpandDepth": 1,
