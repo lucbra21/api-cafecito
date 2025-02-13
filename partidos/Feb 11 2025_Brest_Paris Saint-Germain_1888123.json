@@ -61,8 +61,8 @@
             "name": "Irfan Peljto"
         },
         "weatherCode": "",
-        "elapsed": "FT",
-        "startTime": "2025-02-11T17:45:00",
+        "elapsed": "F",
+        "startTime": "2025-02-11T18:45:00",
         "startDate": "2025-02-11T00:00:00",
         "score": "0 : 3",
         "htScore": "0 : 2",
@@ -2398,20 +2398,10 @@
                     "stats": {}
                 },
                 "missHighRight": {
-                    "stats": {
-                        "59": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "missLeft": {
-                    "stats": {
-                        "81": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "missRight": {
                     "stats": {}
@@ -2435,71 +2425,17 @@
                     "stats": {}
                 },
                 "onTargetLowLeft": {
-                    "stats": {
-                        "42": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "50": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "70": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "73": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "93": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "onTargetLowCentre": {
-                    "stats": {
-                        "34": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "42": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "47": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "50": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "51": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "92": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "93": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "94": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "onTargetLowRight": {
                     "stats": {}
                 }
             },
             "name": "Brest",
-            "countryName": "France",
+            "countryName": "Francia",
             "players": [
                 {
                     "playerId": 83824,
@@ -8056,35 +7992,16 @@
                     "stats": {}
                 },
                 "missHighCentre": {
-                    "stats": {
-                        "28": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "missHighRight": {
-                    "stats": {
-                        "29": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "missLeft": {
                     "stats": {}
                 },
                 "missRight": {
-                    "stats": {
-                        "37": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "60": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "postLeft": {
                     "stats": {}
@@ -8105,68 +8022,17 @@
                     "stats": {}
                 },
                 "onTargetLowLeft": {
-                    "stats": {
-                        "16": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "20": {
-                            "goalCount": 1,
-                            "count": 1
-                        },
-                        "65": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "onTargetLowCentre": {
-                    "stats": {
-                        "25": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "64": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "68": {
-                            "goalCount": 1,
-                            "count": 1
-                        },
-                        "78": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "91": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "97": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 },
                 "onTargetLowRight": {
-                    "stats": {
-                        "16": {
-                            "goalCount": 0,
-                            "count": 1
-                        },
-                        "44": {
-                            "goalCount": 1,
-                            "count": 1
-                        },
-                        "77": {
-                            "goalCount": 0,
-                            "count": 1
-                        }
-                    }
+                    "stats": {}
                 }
             },
             "name": "PSG",
-            "countryName": "France",
+            "countryName": "Francia",
             "players": [
                 {
                     "playerId": 262515,
@@ -9859,7 +9725,7 @@
                     "position": "MC",
                     "height": 172,
                     "weight": 64,
-                    "age": 24,
+                    "age": 25,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",
