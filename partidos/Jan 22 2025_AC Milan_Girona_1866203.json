@@ -41,7 +41,7 @@
             "416959": "Alejandro Francés",
             "444239": "Arnau Martínez",
             "444246": "Ricard Artero",
-            "497063": "Silvi Clua",
+            "497063": "Selvi Clua",
             "231125": "Viktor Tsyhankov",
             "24400": "Cristhian Stuani",
             "318505": "Yangel Herrera"
@@ -11013,7 +11013,7 @@
                     "position": "AML",
                     "height": 175,
                     "weight": 60,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 323625,
                     "subbedOutPeriod": {
@@ -11852,7 +11852,7 @@
                 {
                     "playerId": 497063,
                     "shirtNo": 28,
-                    "name": "Silvi Clua",
+                    "name": "Selvi Clua",
                     "position": "Sub",
                     "height": 189,
                     "weight": 79,
@@ -11869,7 +11869,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 27.3
+            "averageAge": 27.4
         },
         "maxMinute": 95,
         "minuteExpanded": 101,

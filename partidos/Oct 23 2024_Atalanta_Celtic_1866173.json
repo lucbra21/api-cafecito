@@ -11629,7 +11629,7 @@
                     "position": "FW",
                     "height": 190,
                     "weight": 83,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 421333,
                     "subbedOutPeriod": {
@@ -12385,7 +12385,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 26.4
+            "averageAge": 26.5
         },
         "maxMinute": 94,
         "minuteExpanded": 95,

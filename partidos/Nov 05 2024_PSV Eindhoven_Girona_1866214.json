@@ -33,7 +33,7 @@
             "140803": "Juanpe",
             "145427": "Pau López",
             "444239": "Arnau Martínez",
-            "497063": "Silvi Clua",
+            "497063": "Selvi Clua",
             "502981": "Jastin García",
             "24400": "Cristhian Stuani",
             "318505": "Yangel Herrera",
@@ -3553,7 +3553,7 @@
                     "position": "DR",
                     "height": 184,
                     "weight": 80,
-                    "age": 29,
+                    "age": 30,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 404776,
                     "subbedOutPeriod": {
@@ -6807,7 +6807,7 @@
                 "running": 4
             },
             "field": "home",
-            "averageAge": 24.5
+            "averageAge": 24.6
         },
         "away": {
             "teamId": 2783,
@@ -10620,7 +10620,7 @@
                 {
                     "playerId": 497063,
                     "shirtNo": 28,
-                    "name": "Silvi Clua",
+                    "name": "Selvi Clua",
                     "position": "DMC",
                     "height": 189,
                     "weight": 79,
@@ -11031,7 +11031,7 @@
                     "position": "AMC",
                     "height": 175,
                     "weight": 60,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 535751,
                     "subbedOutPeriod": {

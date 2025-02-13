@@ -10867,7 +10867,7 @@
                     "position": "FWR",
                     "height": 176,
                     "weight": 72,
-                    "age": 22,
+                    "age": 23,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",
@@ -11987,7 +11987,7 @@
                 "running": 3
             },
             "field": "away",
-            "averageAge": 24.1
+            "averageAge": 24.2
         },
         "maxMinute": 95,
         "minuteExpanded": 98,

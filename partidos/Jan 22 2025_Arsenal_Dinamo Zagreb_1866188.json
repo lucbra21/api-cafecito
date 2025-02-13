@@ -9344,7 +9344,7 @@
                     "position": "DR",
                     "height": 181,
                     "weight": 73,
-                    "age": 32,
+                    "age": 33,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",
@@ -11886,7 +11886,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 25.4
+            "averageAge": 25.5
         },
         "maxMinute": 93,
         "minuteExpanded": 96,

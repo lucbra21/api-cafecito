@@ -10414,7 +10414,7 @@
                     "position": "Sub",
                     "height": 178,
                     "weight": 71,
-                    "age": 23,
+                    "age": 24,
                     "subbedInPeriod": {
                         "value": 2,
                         "displayName": "SecondHalf"
@@ -10608,7 +10608,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 25.1
+            "averageAge": 25.2
         },
         "maxMinute": 95,
         "minuteExpanded": 97,

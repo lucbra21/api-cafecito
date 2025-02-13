@@ -4461,7 +4461,7 @@
                     "position": "FWR",
                     "height": 176,
                     "weight": 72,
-                    "age": 22,
+                    "age": 23,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 377288,
                     "subbedOutPeriod": {
@@ -5379,7 +5379,7 @@
                 "running": 3
             },
             "field": "home",
-            "averageAge": 24.1
+            "averageAge": 24.2
         },
         "away": {
             "teamId": 37,

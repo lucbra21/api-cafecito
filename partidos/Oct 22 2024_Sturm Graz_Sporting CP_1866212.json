@@ -3134,7 +3134,7 @@
                     "position": "DC",
                     "height": 188,
                     "weight": 77,
-                    "age": 24,
+                    "age": 25,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 397431,
                     "subbedOutPeriod": {
@@ -5398,7 +5398,7 @@
                 "running": 0
             },
             "field": "home",
-            "averageAge": 22.7
+            "averageAge": 22.8
         },
         "away": {
             "teamId": 296,

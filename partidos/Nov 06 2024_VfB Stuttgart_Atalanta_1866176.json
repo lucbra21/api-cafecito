@@ -5842,7 +5842,7 @@
                     "position": "Sub",
                     "height": 195,
                     "weight": 95,
-                    "age": 26,
+                    "age": 27,
                     "subbedInPeriod": {
                         "value": 2,
                         "displayName": "SecondHalf"
@@ -6203,7 +6203,7 @@
                 "running": 0
             },
             "field": "home",
-            "averageAge": 24.1
+            "averageAge": 24.2
         },
         "away": {
             "teamId": 300,

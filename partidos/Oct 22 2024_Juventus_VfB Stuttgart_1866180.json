@@ -4132,7 +4132,7 @@
                     "position": "MC",
                     "height": 178,
                     "weight": 71,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "home",
@@ -8954,7 +8954,7 @@
                     "position": "DC",
                     "height": 195,
                     "weight": 95,
-                    "age": 26,
+                    "age": 27,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",
@@ -11505,7 +11505,7 @@
                 "running": 1
             },
             "field": "away",
-            "averageAge": 24.0
+            "averageAge": 24.1
         },
         "maxMinute": 98,
         "minuteExpanded": 100,

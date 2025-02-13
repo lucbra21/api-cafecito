@@ -10406,7 +10406,7 @@
                     "position": "DMC",
                     "height": 178,
                     "weight": 71,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",
@@ -12625,7 +12625,7 @@
                 "running": 3
             },
             "field": "away",
-            "averageAge": 25.3
+            "averageAge": 25.4
         },
         "maxMinute": 99,
         "minuteExpanded": 107,

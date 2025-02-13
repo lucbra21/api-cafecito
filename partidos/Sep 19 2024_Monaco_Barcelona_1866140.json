@@ -65,8 +65,8 @@
             "name": "Allard Lindhout"
         },
         "weatherCode": "",
-        "elapsed": "F",
-        "startTime": "2024-09-19T21:00:00",
+        "elapsed": "FT",
+        "startTime": "2024-09-19T20:00:00",
         "startDate": "2024-09-19T00:00:00",
         "score": "2 : 1",
         "htScore": "1 : 1",
@@ -3419,10 +3419,24 @@
                     "stats": {}
                 },
                 "missLeft": {
-                    "stats": {}
+                    "stats": {
+                        "20": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "missRight": {
-                    "stats": {}
+                    "stats": {
+                        "37": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "82": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "postLeft": {
                     "stats": {}
@@ -3434,7 +3448,20 @@
                     "stats": {}
                 },
                 "onTargetHighLeft": {
-                    "stats": {}
+                    "stats": {
+                        "45": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "73": {
+                            "goalCount": 1,
+                            "count": 1
+                        },
+                        "83": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "onTargetHighCentre": {
                     "stats": {}
@@ -3443,17 +3470,64 @@
                     "stats": {}
                 },
                 "onTargetLowLeft": {
-                    "stats": {}
+                    "stats": {
+                        "67": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "onTargetLowCentre": {
-                    "stats": {}
+                    "stats": {
+                        "6": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "11": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "13": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "26": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "49": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "67": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "92": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "onTargetLowRight": {
-                    "stats": {}
+                    "stats": {
+                        "15": {
+                            "goalCount": 1,
+                            "count": 1
+                        },
+                        "45": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "59": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 }
             },
             "name": "Monaco",
-            "countryName": "Francia",
+            "countryName": "France",
             "players": [
                 {
                     "playerId": 383689,
@@ -9477,13 +9551,27 @@
                     "stats": {}
                 },
                 "missHighCentre": {
-                    "stats": {}
+                    "stats": {
+                        "95": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "missHighRight": {
                     "stats": {}
                 },
                 "missLeft": {
-                    "stats": {}
+                    "stats": {
+                        "30": {
+                            "goalCount": 0,
+                            "count": 1
+                        },
+                        "64": {
+                            "goalCount": 0,
+                            "count": 1
+                        }
+                    }
                 },
                 "missRight": {
                     "stats": {}
@@ -9513,11 +9601,16 @@
                     "stats": {}
                 },
                 "onTargetLowRight": {
-                    "stats": {}
+                    "stats": {
+                        "27": {
+                            "goalCount": 1,
+                            "count": 1
+                        }
+                    }
                 }
             },
             "name": "Barcelona",
-            "countryName": "España",
+            "countryName": "Spain",
             "players": [
                 {
                     "playerId": 80774,

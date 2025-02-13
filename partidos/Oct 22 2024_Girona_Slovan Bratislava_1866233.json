@@ -13,7 +13,7 @@
             "140803": "Juanpe",
             "92691": "David López",
             "444239": "Arnau Martínez",
-            "497063": "Silvi Clua",
+            "497063": "Selvi Clua",
             "416959": "Alejandro Francés",
             "24400": "Cristhian Stuani",
             "318505": "Yangel Herrera",
@@ -5658,7 +5658,7 @@
                 {
                     "playerId": 497063,
                     "shirtNo": 28,
-                    "name": "Silvi Clua",
+                    "name": "Selvi Clua",
                     "position": "Sub",
                     "height": 189,
                     "weight": 79,
@@ -10819,7 +10819,7 @@
                     "position": "Sub",
                     "height": 194,
                     "weight": 0,
-                    "age": 20,
+                    "age": 21,
                     "isManOfTheMatch": false,
                     "field": "away",
                     "stats": {}
@@ -10844,7 +10844,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 26.4
+            "averageAge": 26.5
         },
         "maxMinute": 94,
         "minuteExpanded": 96,

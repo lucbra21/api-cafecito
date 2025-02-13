@@ -6944,7 +6944,7 @@
                     "position": "Sub",
                     "height": 191,
                     "weight": 80,
-                    "age": 25,
+                    "age": 26,
                     "isManOfTheMatch": false,
                     "field": "home",
                     "stats": {}
@@ -6969,7 +6969,7 @@
                 "running": 3
             },
             "field": "home",
-            "averageAge": 26.5
+            "averageAge": 26.6
         },
         "away": {
             "teamId": 41,
@@ -10421,7 +10421,7 @@
                     "position": "DC",
                     "height": 195,
                     "weight": 95,
-                    "age": 26,
+                    "age": 27,
                     "isFirstEleven": true,
                     "isManOfTheMatch": false,
                     "field": "away",

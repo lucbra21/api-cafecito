@@ -39,7 +39,7 @@
             "115726": "Andy Robertson",
             "424945": "Conor Bradley",
             "517768": "Amara Nallo",
-            "551571": "Trent Kone-Doherty",
+            "551571": "Trent Koné-Doherty",
             "551573": "Kieran Morrison",
             "509423": "Treymaurice Nyoni"
         },
@@ -3305,7 +3305,7 @@
                     "position": "DR",
                     "height": 184,
                     "weight": 80,
-                    "age": 29,
+                    "age": 30,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 386631,
                     "subbedOutPeriod": {
@@ -6563,7 +6563,7 @@
                 "running": 3
             },
             "field": "home",
-            "averageAge": 24.2
+            "averageAge": 24.3
         },
         "away": {
             "teamId": 26,
@@ -12561,7 +12561,7 @@
                 {
                     "playerId": 551571,
                     "shirtNo": 51,
-                    "name": "Trent Kone-Doherty",
+                    "name": "Trent Koné-Doherty",
                     "position": "Sub",
                     "height": 175,
                     "weight": 65,

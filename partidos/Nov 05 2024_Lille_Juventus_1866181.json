@@ -10758,7 +10758,7 @@
                     "position": "Sub",
                     "height": 178,
                     "weight": 71,
-                    "age": 23,
+                    "age": 24,
                     "isManOfTheMatch": false,
                     "field": "away",
                     "stats": {}
@@ -10819,7 +10819,7 @@
                 "running": 1
             },
             "field": "away",
-            "averageAge": 24.4
+            "averageAge": 24.5
         },
         "maxMinute": 95,
         "minuteExpanded": 99,

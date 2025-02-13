@@ -6199,7 +6199,7 @@
                     "position": "Sub",
                     "height": 188,
                     "weight": 83,
-                    "age": 29,
+                    "age": 30,
                     "isManOfTheMatch": false,
                     "field": "home",
                     "stats": {}
@@ -10846,7 +10846,7 @@
                     "position": "AML",
                     "height": 175,
                     "weight": 60,
-                    "age": 23,
+                    "age": 24,
                     "isFirstEleven": true,
                     "subbedInPlayerId": 443540,
                     "subbedOutPeriod": {
@@ -11681,7 +11681,7 @@
                 "running": 0
             },
             "field": "away",
-            "averageAge": 27.6
+            "averageAge": 27.7
         },
         "maxMinute": 94,
         "minuteExpanded": 96,
