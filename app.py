@@ -1,9 +1,9 @@
 import os
 import json
-import glob
+import glob 
 import csv
 
-from flasgger import Swagger
+from flasgger import Swagger # documentacion automatica
 
 from functools import wraps
 from flask import Flask, jsonify, request
