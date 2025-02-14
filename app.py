@@ -59,7 +59,7 @@ AUTH_TOKEN = os.getenv("AUTH_TOKEN")
 # Ruta al archivo Excel con la información de torneos/competiciones
 TOURNAMENT_FILE = "tournaments.xlsx"
 # Ruta al archivo CSV con la información de los partidos
-MATCHES_CSV = "matches.csv"
+MATCHES_CSV = "matches_4.csv"
 # Directorio donde se encuentran los archivos JSON de los partidos
 PARTIDOS_DIR = "partidos"
 
