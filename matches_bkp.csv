@@ -1,0 +1,37 @@
+region,tournament,season,stage,competition,date,time_or_status,home_team,away_team,match_id,home_score,away_score,home_odds,draw_odds,away_odds
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Atalanta,Sturm Graz,1866175,5,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Monaco,Aston Villa,1866234,1,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Slovan Bratislava,VfB Stuttgart,1866232,1,3,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,FK Crvena Zvezda,PSV Eindhoven,1866213,2,3,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",N/A,Club Bruges,Juventus,1866179,0,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Bologna,Borussia Dortmund,1866134,2,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Benfica,Barcelona,1866136,4,5,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Liverpool,Lille,1866150,2,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Tuesday, Jan 21 2025",FT,Atletico Madrid,Bayer Leverkusen,1866155,2,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,RB Leipzig,Sporting CP,1866123,2,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Shakhtar Donetsk,Brest,1866199,2,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,AC Milan,Girona,1866203,1,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Arsenal,Dinamo Zagreb,1866188,3,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Celtic,BSC Young Boys,1866227,1,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Paris Saint-Germain,Manchester City,1866098,4,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Sparta Prague,Inter,1866111,0,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Feyenoord,Bayern Munich,1866117,3,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 22 2025",FT,Real Madrid,Salzburg,1866145,5,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Brest,Real Madrid,1866147,0,3,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,PSV Eindhoven,Liverpool,1866151,3,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Bayer Leverkusen,Sparta Prague,1866158,2,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Salzburg,Atletico Madrid,1866163,1,4,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,VfB Stuttgart,Paris Saint-Germain,1866170,1,4,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Bayern Munich,Slovan Bratislava,1866118,3,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Manchester City,Club Bruges,1866099,3,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Inter,Monaco,1866109,3,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Sturm Graz,RB Leipzig,1866126,1,0,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Borussia Dortmund,Shakhtar Donetsk,1866129,3,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Barcelona,Atalanta,1866135,2,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Aston Villa,Celtic,1866231,4,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,BSC Young Boys,FK Crvena Zvezda,1866224,0,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Girona,Arsenal,1866191,1,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Juventus,Benfica,1866177,0,2,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Lille,Feyenoord,1866206,6,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Sporting CP,Bologna,1866211,1,1,N/A,N/A,N/A
+250,12,10456,23663,Europe-Champions-League-2024-2025,"Wednesday, Jan 29 2025",FT,Dinamo Zagreb,AC Milan,1866202,2,1,N/A,N/A,N/A
