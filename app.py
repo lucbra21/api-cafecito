@@ -59,7 +59,8 @@ AUTH_TOKEN = os.getenv("AUTH_TOKEN")
 # Ruta al archivo Excel con la información de torneos/competiciones
 TOURNAMENT_FILE = "tournaments.xlsx"
 # Ruta al archivo CSV con la información de los partidos
-MATCHES_CSV = "matches.csv"
+MATCHES_CSV = "matches_4.csv"
+MATCHES_XLSX = "matches_4.xlsx"
 # Directorio donde se encuentran los archivos JSON de los partidos
 PARTIDOS_DIR = "partidos"
 
@@ -273,13 +274,14 @@ def read_matches():
 
     matches = []
     try:
-        with open(MATCHES_CSV, newline='', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                matches.append(row)
+        # with open(MATCHES_CSV, newline='', encoding='utf-8') as csvfile:
+        #     reader = csv.DictReader(csvfile)
+        #     for row in reader:
+        #         matches.append(row)
+        matches = pd.read_excel(MATCHES_XLSX)
     except FileNotFoundError:
         # Se podría lanzar un error o retornar lista vacía
-        print(f"El archivo {MATCHES_CSV} no se encontró.")
+        print(f"El archivo {MATCHES_XLSX} no se encontró.")
     except Exception as e:
         print("Error al leer el CSV:", str(e))
     return matches
@@ -369,7 +371,8 @@ def get_all_matches():
               example: "Error al leer el archivo MATCHES_CSV"
     """
     matches = read_matches()
-    return jsonify(matches)
+    #return jsonify(matches)
+    return matches.to_json(orient='records')
 
 # 2. Endpoint que trae los partidos de una competición específica
 @app.route("/matches/competition/<competition>", methods=["GET"])
@@ -462,12 +465,26 @@ def get_matches_by_competition(competition):
               type: string
               example: "No se encontraron partidos para la competición 'Europe-Champions-League-2024-2025'"
     """
+    # Primero leemos los matches
     matches = read_matches()
-    # Se hace una comparación en minúsculas para evitar problemas con mayúsculas/minúsculas
-    filtered = [m for m in matches if m.get("competition", "").lower() == competition.lower()]
-    if not filtered:
-        return jsonify({"mensaje": f"No se encontraron partidos para la competición '{competition}'"}), 404
-    return jsonify(filtered)
+    
+    # Convertimos matches a DataFrame si no lo es ya
+    if not isinstance(matches, pd.DataFrame):
+        matches = pd.DataFrame(matches)
+    
+    # Filtramos usando pandas
+    filtered = matches[
+        (matches['competition'].str.lower() == competition.lower()) 
+    ]
+    
+    # Si no hay resultados
+    if filtered.empty:
+        return jsonify({
+            "mensaje": f"No se encontraron partidos para la competición '{competition}' y la temporada '{season}'"
+        }), 404
+    
+    # Convertimos a JSON y retornamos
+    return filtered.to_json(orient='records')
 
 # 3. Endpoint que trae los partidos de una competición y una temporada específicas
 @app.route("/matches/competition/<competition>/season/<season>", methods=["GET"])
@@ -567,14 +584,27 @@ def get_matches_by_competition_and_season(competition, season):
               type: string
               example: "No se encontraron partidos para la competición 'Europe-Champions-League-2024-2025' y la temporada '10456'"
     """
+    # Primero leemos los matches
     matches = read_matches()
-    filtered = [
-        m for m in matches 
-        if m.get("competition", "").lower() == competition.lower() and m.get("season", "") == season
+    
+    # Convertimos matches a DataFrame si no lo es ya
+    if not isinstance(matches, pd.DataFrame):
+        matches = pd.DataFrame(matches)
+    
+    # Filtramos usando pandas
+    filtered = matches[
+        (matches['competition'].str.lower() == competition.lower()) & 
+        (matches['season'].astype(str) == str(season))
     ]
-    if not filtered:
-        return jsonify({"mensaje": f"No se encontraron partidos para la competición '{competition}' y la temporada '{season}'"}), 404
-    return jsonify(filtered)
+    
+    # Si no hay resultados
+    if filtered.empty:
+        return jsonify({
+            "mensaje": f"No se encontraron partidos para la competición '{competition}' y la temporada '{season}'"
+        }), 404
+    
+    # Convertimos a JSON y retornamos
+    return filtered.to_json(orient='records')
 
 # 4. Endpoint que trae un partido en particular según su id
 # @app.route("/matches/id/<match_id>", methods=["GET"])
